@@ -25,7 +25,8 @@ def stats() -> str:
     stats['users'] = User.count()
     return jsonify(stats)
 
+
 @app_views.route('/unauthorized', strict_slashes=False)
 def not_found() -> None:
-  """Raises a 401 not found error"""
-  abort(401)
+    """Raises a 401 not found error"""
+    abort(401)
