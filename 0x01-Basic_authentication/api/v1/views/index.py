@@ -30,3 +30,9 @@ def stats() -> str:
 def not_found() -> None:
     """Raises a 401 not found error"""
     abort(401)
+
+
+@app_views.route('/forbidden', strict_slashes=False)
+def not_found() -> None:
+    """Raises a 403 access forbidden error"""
+    abort(403)
