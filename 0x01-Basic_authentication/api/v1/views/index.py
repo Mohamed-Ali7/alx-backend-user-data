@@ -33,6 +33,6 @@ def not_found() -> None:
 
 
 @app_views.route('/forbidden', strict_slashes=False)
-def not_found() -> None:
+def access_forbidden() -> None:
     """Raises a 403 access forbidden error"""
     abort(403)
