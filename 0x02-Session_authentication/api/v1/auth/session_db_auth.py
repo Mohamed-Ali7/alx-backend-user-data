@@ -52,7 +52,7 @@ class SessionDBAuth(SessionExpAuth):
         expiration_time = user_session[0].created_at + timedelta(
             seconds=self.session_duration)
 
-        if expiration_time < datetime.utcnow():
+        if expiration_time < datetime.now():
             return None
 
         return user_session[0].user_id
