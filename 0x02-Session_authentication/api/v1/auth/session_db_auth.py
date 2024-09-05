@@ -66,7 +66,7 @@ class SessionDBAuth(SessionExpAuth):
         if not request:
             return False
 
-        session_id = request.cookies.get("SESSION_NAME")
+        session_id = request.cookies.get(getenv("SESSION_NAME"))
 
         if not session_id:
             return False
