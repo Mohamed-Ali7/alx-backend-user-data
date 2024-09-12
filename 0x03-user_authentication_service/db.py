@@ -60,16 +60,16 @@ class DB:
 
         return user
 
-    def update_user(self, user_id: int, **kwargs: dict) -> None:
+    def update_user(self, user_id: int, **kwargs) -> None:
         """
         Update the user’s attributes as passed in the method’s
         arguments then commit changes to the database.
         """
 
         user = self.find_user_by(id=user_id)
-        session = self._session
-        for attr, val in kwargs.items():
-            if not hasattr(User, attr):
+        for key, val in kwargs.items():
+            if key not in User.__dict__:
                 raise ValueError
-            setattr(user, attr, val)
-        session.commit()
+            setattr(user, key, val)
+
+        self._session.commit()
