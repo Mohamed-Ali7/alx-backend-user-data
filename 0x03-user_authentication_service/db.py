@@ -2,7 +2,7 @@
 
 """DB module"""
 
-from sqlalchemy import create_engine, tuple_
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
@@ -44,26 +44,20 @@ class DB:
         return user
 
     def find_user_by(self, **kwargs) -> User:
-        """ Find user by a given attribute
-            Args:
-                - Dictionary of attributes to use as search
-                  parameters
-            Return:
-                - User object
+        """
+        Returns the first row found in the users table
+        as filtered by the method’s input arguments
         """
 
-        attrs, vals = [], []
-        for attr, val in kwargs.items():
-            if not hasattr(User, attr):
+        for key in kwargs:
+            if key not in User.__dict__:
                 raise InvalidRequestError()
-            attrs.append(getattr(User, attr))
-            vals.append(val)
 
-        session = self._session
-        query = session.query(User)
-        user = query.filter(tuple_(*attrs).in_([tuple(vals)])).first()
+        user = self._session.query(User).filter_by(**kwargs).first()
+
         if not user:
             raise NoResultFound()
+
         return user
 
     def update_user(self, user_id: int, **kwargs: dict) -> None:
@@ -73,9 +67,9 @@ class DB:
         """
 
         user = self.find_user_by(id=user_id)
-        for key, val in kwargs.items():
-            if key not in User.__dict__:
+        session = self._session
+        for attr, val in kwargs.items():
+            if not hasattr(User, attr):
                 raise ValueError
-            setattr(user, key, val)
-
-        self._session.commit()
+            setattr(user, attr, val)
+        session.commit()
