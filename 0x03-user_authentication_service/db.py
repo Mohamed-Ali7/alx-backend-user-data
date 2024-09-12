@@ -59,3 +59,18 @@ class DB:
             raise NoResultFound()
 
         return user
+
+    def update_user(self, user_id: int, **kwargs: dict) -> None:
+        """
+        Update the user’s attributes as passed in the method’s
+        arguments then commit changes to the database.
+        """
+
+        for key in kwargs:
+            if key not in User.__dict__:
+                raise ValueError()
+
+        user = self.find_user_by(id=user_id)
+        new_user = self._session.query(User).update(kwargs)
+
+        self._session.commit()
