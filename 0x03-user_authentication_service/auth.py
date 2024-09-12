@@ -13,7 +13,7 @@ def _hash_password(password: str) -> bytes:
 
     pwd_salt = bcrypt.gensalt()
 
-    hashed_password = bcrypt.hashpw(password.encode(), pwd_salt)
+    hashed_password = bcrypt.hashpw(password.encode("utf-8"), pwd_salt)
 
     return hashed_password
 
@@ -28,11 +28,12 @@ class Auth:
         """Registers a new user"""
 
         try:
-            user = self._db.find_user_by(email=email)
-            raise ValueError("User {} already exists".format(email))
+            self._db.find_user_by(email=email)
+            ValueError("User {} already exists".format(email))
         except NoResultFound:
             pass
 
         hashed_password = _hash_password(password)
         user = self._db.add_user(email, hashed_password)
+
         return user
