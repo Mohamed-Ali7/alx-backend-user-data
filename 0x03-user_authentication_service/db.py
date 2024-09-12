@@ -69,7 +69,7 @@ class DB:
         user = self.find_user_by(id=user_id)
         for key, val in kwargs.items():
             if key not in User.__dict__:
-                raise ValueError()
+                raise ValueError
             setattr(user, key, val)
 
         self._session.commit()
