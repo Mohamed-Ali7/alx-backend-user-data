@@ -2,7 +2,7 @@
 
 """DB module"""
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, tuple_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
@@ -44,20 +44,26 @@ class DB:
         return user
 
     def find_user_by(self, **kwargs) -> User:
-        """
-        Returns the first row found in the users table
-        as filtered by the method’s input arguments
+        """ Find user by a given attribute
+            Args:
+                - Dictionary of attributes to use as search
+                  parameters
+            Return:
+                - User object
         """
 
-        for key in kwargs:
-            if key not in User.__dict__:
+        attrs, vals = [], []
+        for attr, val in kwargs.items():
+            if not hasattr(User, attr):
                 raise InvalidRequestError()
+            attrs.append(getattr(User, attr))
+            vals.append(val)
 
-        user = self._session.query(User).filter_by(**kwargs).first()
-
+        session = self._session
+        query = session.query(User)
+        user = query.filter(tuple_(*attrs).in_([tuple(vals)])).first()
         if not user:
             raise NoResultFound()
-
         return user
 
     def update_user(self, user_id: int, **kwargs: dict) -> None:
