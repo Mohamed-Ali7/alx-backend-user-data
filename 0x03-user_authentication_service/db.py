@@ -66,11 +66,10 @@ class DB:
         arguments then commit changes to the database.
         """
 
-        for key in kwargs:
-            if key not in User.__dict__:
-                raise ValueError()
-
         user = self.find_user_by(id=user_id)
-        new_user = self._session.query(User).update(kwargs)
+        for key, val in kwargs.items():
+            if key not in user.__dict__:
+                raise ValueError()
+            setattr(user, key, val)
 
         self._session.commit()
