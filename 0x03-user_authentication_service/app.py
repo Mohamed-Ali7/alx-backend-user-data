@@ -2,7 +2,7 @@
 
 """This modules starts a flask app"""
 
-from flask import Flask, abort, jsonify, request, make_response
+from flask import Flask, abort, jsonify, request, make_response, redirect
 from auth import Auth
 
 
@@ -63,6 +63,24 @@ def login():
     res.set_cookie("session_id", session_id)
 
     return res
+
+
+@app.route("/sessions", methods=["DELETE"], strict_slashes=False)
+def logout():
+    """
+    Finds the user with the requested session ID and
+    destroy the session and redirect the user to GET /
+    """
+
+    session_id = request.cookies.get('session_id')
+
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if not user:
+        abort(403)
+
+    AUTH.destroy_session(user.id)
+    redirect("/")
 
 
 if __name__ == "__main__":
