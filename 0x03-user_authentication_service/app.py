@@ -83,7 +83,7 @@ def logout():
     return redirect("/")
 
 
-@app.route("/profile ", strict_slashes=False)
+@app.route("/profile", strict_slashes=False)
 def profile():
     """Finds the user with the requested session ID"""
 
