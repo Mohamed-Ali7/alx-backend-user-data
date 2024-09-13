@@ -2,6 +2,7 @@
 
 """This module contains _hash_password() method"""
 
+from typing import Union
 import bcrypt
 from db import DB
 from user import User
@@ -77,3 +78,16 @@ class Auth:
             return None
 
         return session_id
+
+    def get_user_from_session_id(self, session_id: str) -> Union[User, None]:
+        """Returns a user with a specific session_id"""
+
+        if not session_id:
+            return None
+
+        try:
+            user = self._db.find_user_by(session_id=session_id)
+        except NoResultFound:
+            return None
+
+        return user
