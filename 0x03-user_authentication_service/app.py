@@ -2,7 +2,7 @@
 
 """This modules starts a flask app"""
 
-from flask import Flask, abort, jsonify, request
+from flask import Flask, abort, jsonify, request, make_response
 from auth import Auth
 
 
@@ -35,6 +35,34 @@ def register_user():
         return jsonify({"message": "email already registered"}), 400
 
     return jsonify({"email": email, "message": "user created"}), 200
+
+
+@app.route("/sessions", methods=["POST"], strict_slashes=False)
+def login():
+    """
+    Creates a new session for the user, store it the session ID
+    as a cookie with key "session_id" on the response
+    and return a JSON payload of the form
+    """
+
+    user_payload = request.form
+
+    if user_payload is None:
+        abort(400, description="Not a JSON")
+
+    email = user_payload.get('email')
+    password = user_payload.get('password')
+
+    if not AUTH.valid_login(email, password):
+        abort(401)
+
+    session_id = AUTH.create_session(email)
+
+    res = make_response({"email": email, "message": "logged in"})
+
+    res.set_cookie("session_id", session_id)
+
+    return res
 
 
 if __name__ == "__main__":
