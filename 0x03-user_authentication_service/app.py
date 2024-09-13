@@ -131,10 +131,11 @@ def update_password():
         abort(400, description="Not a JSON")
 
     email = user_payload.get("email")
+    reset_token = user_payload.get("reset_token")
     new_password = user_payload.get("new_password")
 
     try:
-        AUTH.update_password(email, new_password)
+        AUTH.update_password(reset_token, new_password)
     except ValueError:
         abort(403)
 
